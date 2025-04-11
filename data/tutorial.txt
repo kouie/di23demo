@@ -1,0 +1,10 @@
+﻿２文字または３文字の読みで漢字を入力します。, "events": [{ "index": 0, "type": "message", "condition": "", "content": "「go」と入力して、チュートリアルを開始しましょう！","mtimer": 0 }], "id": "tut00"
+山本 一郎, "events": [{ "index": 0, "type": "message", "condition": "", "content": "名前 (入力対象) の下に表示されている英数 2 文字の読みを入力しましょう。 [1/7]","mtimer": 0 }]
+中川 奈々, "events": [{ "index": 0, "type": "message", "condition": "", "content": "2 文字の読みを入力しましょう（もう一度）。1 文字削除には BackSpace を使います。 [2/7]","mtimer": 0 }]
+岩田 綾子, "events": [{ "index": 0, "type": "message", "condition": "", "content": "3 文字の読みを入力しましょう。 [3/7]", "mtimer": 0 }]
+長谷川 栞, "events": [{ "index": 0, "type": "message", "condition": "", "content": "3 文字の読みです（もう一度）。変換は Enter・タブキーなどでキャンセルされます。 [4/7]", "mtimer": 0 }]
+鈴木 花子, "events": [{ "index": 0, "type": "message", "condition": "", "content": "単語の登録状況によっては、2 文字で変換された単語が続けて 3 文字で変換される場合があります。 [5/7]", "mtimer": 0 }]
+鈴川 華子, "events": [{ "index": 0, "type": "message", "condition": "", "content": "区切り位置を 2 文字目の後に戻す場合は Ctrl＋L を使います (bk k または bk kw のあと)。 [6/7]", "mtimer": 0 }]
+佐藤 奈央子, "events": [{ "index": 0, "type": "message", "condition": "", "content": "表示されている読み以外でも、登録されていれば入力できます (sl fj nr ohv で入力できます)。[7/7]", "mtimer": 0 }]
+チュートリアルは以上です。, "events": [{ "index": 0, "type": "message", "condition": "", "content": "おつかれさまでした。「ok」を入力してください。", "mtimer": 0 }]
+「姓名」タブもぜひお試しください。, "events": [{ "index": 0, "type": "message", "condition": "", "content": "「ret」を入力すると最初のページに戻ります。", "mtimer": 0 }, {"index":0, "type":"countup", "condition":"", "target":"gameOpen:1"}]
