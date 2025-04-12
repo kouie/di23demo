@@ -82,7 +82,7 @@ let infoForDataset = {
 };
 
 // 許可する type のリスト
-const ALLOWED_TYPES = ["message", "jump", "repack", "bufferClear", "countup", "calc"];        
+const ALLOWED_TYPES = ["message", "jump", "repack", "bufferClear", "countup", "calc", "addDic", "valueset","resetdic"];        
 
 let currentDataSet = "names-kanji"; // 現在のターゲットデータセット
 let currentTargetIndex = 0;     // 現在の入力対象インデックス (どこまで進んだか)
@@ -92,7 +92,8 @@ let checkingIndex = 0;
 let currentTargetReadings = []; // 現在の入力対象の読み単位の配列
 let currentCompletedTarget = "" // 入力完了 (隠れ読みに対応するなら)
 let nextTimer = 0;
-let gameDataOriginal = [];
+let gameBasedict = {};
+let gamePowUpdict = {};
 
 // DOM要素
 const inputField = document.getElementById('inputField');
@@ -326,6 +327,7 @@ async function initDictionaries() {
         dictionaries.katakana = kanaDict;
         dictionaries.tutorial = tutorialsDict;
         dictionaries.game = gameDict;
+        gameBasedict = structuredClone(gameDict);
         gamePowUpdict = gamePowupDict;
         dictionary = dictionaries[currentDictionary];
 
@@ -655,7 +657,8 @@ function goToNextTarget(value) {
 
 // 入力表示の更新
 function updateDisplay() {
-    inputDisplay.textContent = `再変換:${reConAble} マッチ:${matchCount} idx: ${checkingIndex}  comp:${currentCompletedTarget}| 前回:${lastFixKey} - 現在:${inputBuffer}`;
+    const score = gameData.score;
+    inputDisplay.textContent = `再変換:${reConAble} マッチ:${matchCount} idx: ${checkingIndex}  comp:${currentCompletedTarget} sco:${score} | 前回:${lastFixKey} - 現在:${inputBuffer}`;
 }
 
 function messageDisplay(text) {
@@ -839,9 +842,9 @@ function countUp(eventData){
         const counter = parts[0];
         
         if (!(counter in gameData)){
-            gameData[counter] = parseInt(value);
+            gameData[counter] = value;
         } else {
-            gameData[counter] += parseInt(value);
+            gameData[counter] += value;
         }
     }
 }
@@ -888,6 +891,72 @@ function calculation(eventData){
     }    
 }
 
+function addDicItem(eventData){
+    const targets = eventData.target;
+    const pattern = /([\u3000-\u9FFF]+)/;
+    
+    const match = targets.match(pattern);
+    if (!match) {
+      return null; // フォーマット不一致
+    }
+
+    const wordlist = [];
+    let count = 0;  // 追加された単語数をカウント
+
+    // 6文字の漢字文字列から1文字ずつ処理
+    for (let i = 0; i < 6; i++) {
+        const target = targets.charAt(i);
+        if (!target) continue;  // 文字が取得できない場合はスキップ
+
+        // gamePowUpdict の各エントリをチェック
+        for (const key of Object.keys(gamePowUpdict)) {
+            // その文字を含み、まだ dictionary に存在しないエントリを追加
+            if (gamePowUpdict[key].indexOf(target) !== -1 && 
+                dictionary && 
+                !dictionary[key]) {
+                wordlist.push(key);
+                count++;
+            }
+        }
+    }   
+
+    if (count > 0){
+        // 重複を除去
+        const uniqueWords = [...new Set(wordlist)];
+
+        // 辞書に追加
+        for (const key of uniqueWords) {
+            dictionary[key] = gamePowUpdict[key];
+        }
+        const message = "ヒットした漢字を含む " + count + " 件の単語が追加されました！"
+        showMessage(message, 3000);
+    }
+}
+
+function settingValue(eventData){
+    const parts = eventData.target.split(":");
+
+    // コロンの後が数値であることを検査する
+    if (parts.length > 1 && /^\d+$/.test(parts[1])) {
+        const value = parseInt(parts[1], 10);
+        const counter = parts[0];
+        gameData[counter] = value;
+    } else if (parts.length > 1 && /^[a-zA-Z]+$/.test(parts[1])) {
+        const counter = parts[0];
+        gameData[counter] = value;
+    }
+}
+
+function resetDictionary(){
+    if (currentDataSet === "game"){
+        let dic = dictionaries[currentDataSet];
+        for (const key in dic) {
+            delete dic[key];
+        }
+        Object.assign(dic, gameBasedict);
+    }
+}
+
 function eventHandle(checkedEvent){
     for (const eventData of checkedEvent) {
         if (eventData.type === "message"){
@@ -911,6 +980,12 @@ function eventHandle(checkedEvent){
             countUp(eventData);
         } else if (eventData.type === "calc"){
             calculation(eventData);
+        } else if (eventData.type === "addDic"){
+            addDicItem(eventData);
+        } else if (eventData.type === "valueset"){
+            settingValue(eventData);
+        } else if (eventData.type === "resetdic"){
+            resetDictionary(eventData);
         }    
     }
 
@@ -937,7 +1012,7 @@ function dataRepacking(repackEvent) {
     const filter = new RegExp("^" + repackEvent.filter + "$");
 
     targetData[currentDataSet].length = 0;
-    targetData[currentDataSet] = structuredClone (originalDataset[currentDataSet]);
+    targetData[currentDataSet] = structuredClone(originalDataset[currentDataSet]);
     target = targetData[currentDataSet];
 
     const placeholderMap = {};
@@ -952,7 +1027,7 @@ function dataRepacking(repackEvent) {
                 for (const match of matches) {
                     if (!placeholderMap[match]) {
                         // ランダムに1文字の漢字を選択して割り当てる
-                        keys = Object.keys(dictionary);
+                        keys = Object.keys(dictionary).filter(key => dictionary[key].length === 1);
                         const randomIndex = Math.floor(Math.random() * keys.length);
                         placeholderMap[match] = dictionary[keys[randomIndex]];
                     }
@@ -967,6 +1042,20 @@ function dataRepacking(repackEvent) {
                     const matches = event.condition.match(placeholderPattern);
                     if (matches) {
                         for (const match of matches) {
+                            if (!placeholderMap[match]) {
+                                // ランダムに1文字の漢字を選択して割り当てる
+                                keys = Object.keys(dictionary);
+                                const randomIndex = Math.floor(Math.random() * keys.length);
+                                placeholderMap[match] = dictionary[keys[randomIndex]];
+                            }
+                        }
+                    }
+                }
+
+                if (event.target) {
+                    const tmatches = event.target.match(placeholderPattern);
+                    if (tmatches) {
+                        for (const match of tmatches) {
                             if (!placeholderMap[match]) {
                                 // ランダムに1文字の漢字を選択して割り当てる
                                 keys = Object.keys(dictionary);
@@ -1000,6 +1089,12 @@ function dataRepacking(repackEvent) {
                         return placeholderMap[match] || match;
                         });
                     }
+                    // targetフィールドの処理
+                    if (event.target) {
+                        event.target = event.target.replace(placeholderPattern, (match) => {
+                        return placeholderMap[match] || match;
+                        });
+                    }
                 }
             }
             console.log(item);
@@ -1023,7 +1118,6 @@ function checkEvent(value) {
 
     for (const typingEvent of currentTarget.events) {
         if(checkingIndex === typingEvent.index){
-//            const completedCondition = cleanText.substr(typingEvent.index, typingEvent.condition.length)
             const completedCondition = currentCompletedTarget;
             if (completedCondition === typingEvent.condition){
                 if (typingEvent.type === "message"){
@@ -1031,7 +1125,6 @@ function checkEvent(value) {
                 } else if (typingEvent.type === "jump") {
                     const dataset = targetData[currentDataSet];
                     const next = dataset.findIndex(item => item.id  === typingEvent.to);
-//                    goToNextTarget(next);
                     triggered.push( {type: "jump", next:next} );
                 } else if (typingEvent.type === "repack") {
                     triggered.push({"type": "repack", "filter": typingEvent.filter});
@@ -1041,6 +1134,12 @@ function checkEvent(value) {
                     triggered.push({"type": "countup", "target": typingEvent.target});
                 } else if (typingEvent.type === "calc"){
                     triggered.push({"type": "calc", "target": typingEvent.target});
+                } else if (typingEvent.type === "addDic"){
+                    triggered.push({"type": "addDic", "target": typingEvent.target});
+                } else if (typingEvent.type === "valueset"){
+                    triggered.push({"type": "valueset", "target": typingEvent.target});
+                } else if (typingEvent.type === "resetdic"){
+                    triggered.push({"type": "resetdic"});
                 }
             }
         }
