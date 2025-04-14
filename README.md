@@ -4,6 +4,13 @@
 
 direct-input23.ahk の詳細については、[元リポジトリ](https://github.com/kouie/direct-input23)の Readme をご覧ください。
 
+## デモサイト
+
+次のアドレスで、本リポジトリをお試しいただけます (GitHub Pages を利用しています)。
+
+サイトアドレス： [https://kouie.github.io/di23demo/](https://kouie.github.io/di23demo/)
+
+
 ## 動作環境
 
 Windows 11 ＋ Chrome ブラウザで動作確認しております。
