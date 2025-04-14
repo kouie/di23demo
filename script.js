@@ -824,7 +824,7 @@ function checkCompletedChars(value) {
             // すべての読みが完了したかチェック
             if (completedReadings.length === currentTargetReadings.length) {
                 if (currentDataSet !== "game"){
-                    showMessage("入力完了！ 次の問題に進みます。");
+                    showMessage("入力完了！ 次の問題に進みます。", 1000);
                 }
                 isProcessing = true;
                 setTimeout(() => {
