@@ -1,5 +1,5 @@
 ﻿山本 萌子, "id": "start"
-鈴木 花子, "events": [{ "index": 3, "type": "message", "condition": "鈴木花子", "content": "「run」を入力すると、1 題目に戻ります。", "mtimer": 0}, { "index": 3, "type": "jump", "condition": "鈴木花子", "to": "end" }]
+鈴木 花子
 佐々木 奈々子
 佐藤 倫子
 大西 加奈子
@@ -47,5 +47,5 @@
 小西 祐亮
 水谷 翔悟
 日下部 敬太
-石黒 直, "events": [{ "index": 3, "type": "message", "condition": "石黒直", "content": "「run」を入力すると、1 題目に戻ります。", "mtimer": 0}, { "index": 3, "type": "jump", "condition": "石黒直", "to": "end" }]
+石黒 直, "events": [{ "index": 2, "type": "message", "condition": "石黒直", "content": "「run」を入力すると、1 題目に戻ります。", "mtimer": 0}, { "index": 2, "type": "jump", "condition": "石黒直", "to": "end" }]
 全問完了です！お疲れさまでした, "id": "end", "events": [{ "index": 0, "type": "jump", "condition": "全問完了です！お疲れさまでした", "to": "start" }]

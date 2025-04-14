@@ -615,11 +615,17 @@ function showNextTarget() {
 
             const inputFieldBackup = inputField.value; 
             const inputBufferBackup = inputBuffer
+            const matchCountBackup = matchCount;
+            const reConAbleBackup  = reConAble;
 
             goToNextTarget();
 
             inputField.value = inputFieldBackup;
             inputBuffer = inputBufferBackup;
+            matchCount = matchCountBackup;
+            reConAble = reConAbleBackup;
+
+            updateDisplay();
 
 //            goToNextTarget();
         }, newtimer);
@@ -929,7 +935,7 @@ function addDicItem(eventData){
             dictionary[key] = gamePowUpdict[key];
         }
         const message = "ヒットした漢字を含む " + count + " 件の単語が追加されました！"
-        showMessage(message, 3000);
+        showMessage(message, 1200);
     }
 }
 
@@ -1517,8 +1523,10 @@ inputField.addEventListener('keydown', function(e) {
         e.preventDefault();
         return;
     } else if ((e.ctrlKey && e.key === 'q') || (e.altKey && e.key === 'F12')) {
-        toggleSystem();
-        e.preventDefault();
+        if (currentDataSet !== "game"){
+            toggleSystem();
+            e.preventDefault();
+        }
         return;
     } else if (e.key === 'Escape') {
         clearInputField();
@@ -1543,7 +1551,7 @@ inputField.addEventListener('keydown', function(e) {
 });
 
 // タイマー付メッセージ表示
-function showMessage(message, duration = 2000) {
+function showMessage_org(message, duration = 2000) {
     // 既存のタイマーがあればクリアする
     if (currentMessageTimer !== null) {
         clearTimeout(currentMessageTimer);
@@ -1562,6 +1570,60 @@ function showMessage(message, duration = 2000) {
     }
     
     return currentMessageTimer;
+}
+
+// メッセージキューとタイマーの管理
+const messageQueue = [];
+//let currentMessageTimer = null;
+let isTimerProcessing = false;
+
+// タイマー付メッセージ表示（キュー対応版）
+function showMessage(message, duration = 2000) {
+    // キューにメッセージを追加
+    messageQueue.push({ message, duration });
+    
+    // まだ処理中でなければ、キュー処理を開始
+    if (!isTimerProcessing) {
+        processMessageQueue();
+    }
+}
+
+// キューの処理
+function processMessageQueue() {
+    // キューが空なら終了
+    if (messageQueue.length === 0) {
+        isTimerProcessing = false;
+        return;
+    }
+    
+    // 処理中フラグを立てる
+    isTimerProcessing = true;
+    
+    // キューから次のメッセージを取得
+    const { message, duration } = messageQueue.shift();
+    
+    // 既存のタイマーがあればクリアする
+    if (currentMessageTimer !== null) {
+        clearTimeout(currentMessageTimer);
+        currentMessageTimer = null;
+    }
+    
+    // メッセージを表示
+    messageDisplay(message);
+    
+    // durationが指定されている場合のみタイマーをセット
+    if (duration > 0) {
+        currentMessageTimer = setTimeout(() => {
+            currentMessageTimer = null;
+            
+            // メッセージの表示時間が終了したら、次のメッセージの処理へ
+            messageDisplay("");
+            processMessageQueue();
+        }, duration);
+    } else {
+        // duration が 0 以下の場合は即時に次のメッセージへ
+        processMessageQueue();
+    }
 }
 
 // バックスペースのキーアップでフラグをリセット

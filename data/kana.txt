@@ -1,4 +1,4 @@
-ヤマムラ ノリコ
+ヤマムラ ノリコ, "id": "start"
 ササキ ヨウコ
 モリオカ ミユキ
 オオマツ キヨシ
@@ -47,4 +47,5 @@
 サクラ クミ
 キムラ ジュン
 マサキ ヨシユキ
-ハセガワ マサヨシ
+ハセガワ マサヨシ, "events": [{ "index": 4, "type": "message", "condition": "ハセガワマサヨシ", "content": "「run」を入力すると、1 題目に戻ります。", "mtimer": 0}, { "index": 4, "type": "jump", "condition": "ハセガワマサヨシ", "to": "end" }]
+全問完了です！お疲れさまでした, "id": "end", "events": [{ "index": 0, "type": "jump", "condition": "全問完了です！お疲れさまでした", "to": "start" }]
