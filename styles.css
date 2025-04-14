@@ -288,6 +288,18 @@ button.toggle-button.suspended {
     font-size: 12px;
 }
 
+.footer a {
+    color: #2b9ae9;
+}
+
+.footer a:visited {
+    color: #2b9ae9;
+}
+
+.footer a:hover {
+    color: #236391;
+}
+
 @media (max-width: 768px) {
     .file-input-group {
         flex-direction: column;
