@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div class="help-button-area">
+       <button id="helpButton" class="secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+        </svg>
+        ヘルプ
+       </button>
+    </div>  
+      
     <h1>漢字入力システムデモ</h1>
     
     <div class="container">
@@ -98,8 +108,49 @@
         </div>
     </div>
 
+
+
+    <!-- モーダルウィンドウ -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">使い方ガイド</h3>
+            <button class="close-button" id="closeModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+             <p class="modal-body-text">
+                まずは、<B>「チュートリアル」</B>タブで基本的な入力方法をご確認ください (すぐ終わります)。そのあと、<b>「姓名 (漢字)」</b>タブと<b>「姓名 (カタカナ)」</b>タブで、「変換キーを使用しない入力」の具合をお試しください。
+            </p>                
+            <p class="modal-body-text">
+                「姓名 (漢字)」タブで使用しているデフォルトの漢字辞書は、再変換があまり発生しないように調整してあります。再変換機能を試してみたい場合は、「姓名 (カタカナ)」タブで入力してみてください。こちらは結構な頻度で再変換が必要になります。
+            </p>                
+            <p class="modal-body-text">
+                <b>「ゲーム」</b>タブは昔あった電卓風のゲームです。漢字 (敵機) の列が表示領域の左端に到達する前に、対応する読みを入力して敵機を撃墜してください。攻撃の判定は常に列の先頭に対して行われ、画面の右側で成功した攻撃ほど点数が高くなります。ゲームスタート時は 1 文字ずつしか攻撃できませんが、ステージをクリアしていくと入力できる読みが追加されていき、連続する 2 文字の漢字ペアを消せるようになります (まとめて消すと 2 文字目のスコアが 2 倍になります)。攻撃可能な漢字ペアが揃えば、ペアの読みが優先して表示されます。
+            </p>                
+            <p class="modal-body-text">
+                ご自分で用意した辞書や課題を試してみたい場合は、下部の「設定」セクションでデータファイルを読み込めます。各ファイルの仕様・形式については、元リポジトリの情報や本リポジトリの dat フォルダを参考にしてください。読みのデータは選択中の辞書から自動的に取得されます。読み込んだ辞書はドロップダウンメニューに、課題データは上部のタブにそれぞれ追加されます。
+            </p>                
+            <p class="modal-body-text">
+                <b>メモ</b>： 辞書に登録されていない漢字が含まれている課題はクリアできません。その場合は F2 キーで先に進めてください。
+            </p>                
+            <p class="modal-body-text">
+                その他、詳しい情報については <a href="https://github.com/kouie/di23demo" target="new">リポジトリ</a> の Readme ファイルをご覧ください。
+            </p>                
+        </div>
+        <div class="modal-footer">
+            <button id="closeButton" class="secondary">閉じる</button>
+        </div>
+        </div>
+    </div>
+
+
     <script src="script.js"></script>
-    
+        
 </body>
 </html>
         

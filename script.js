@@ -1675,6 +1675,45 @@ dictionaryTypeSelect.addEventListener('change', function() {
     switchDictionary(this.value);
 });
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 要素の取得
+    const helpButton = document.getElementById('helpButton');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeModal = document.getElementById('closeModal');
+    const closeButton = document.getElementById('closeButton');
+    
+    // モーダルを開く
+    function openModal() {
+      modalOverlay.classList.add('active');
+    }
+    
+    // モーダルを閉じる
+    function closeModalFunc() {
+      modalOverlay.classList.remove('active');
+    }
+    
+    // イベントリスナーの設定
+    helpButton.addEventListener('click', openModal);
+    closeModal.addEventListener('click', closeModalFunc);
+    closeButton.addEventListener('click', closeModalFunc);
+    
+    // モーダルの外側をクリックしたときにモーダルを閉じる
+    modalOverlay.addEventListener('click', function(e) {
+      if (e.target === modalOverlay) {
+        closeModalFunc();
+      }
+    });
+    
+    // ESCキーでモーダルを閉じる
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        closeModalFunc();
+      }
+    });
+  });
+
+
 let debounceTimer;
 // タブ切り替えイベント
 tabs.forEach(tab => {
